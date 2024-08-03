@@ -136,16 +136,19 @@ class GameSelection(Scene):
 
         center = WIDTH/2
         self.widgets = {
-            "slider":Slider(self.screen, WIDTH//2-260//2,300, 260,75, min=0, max=5, handleRadius= 30, initial=0,step=0.25),
+            "slider":Slider(self.screen, WIDTH//2-260//2,300, 260,75, min=1, max=9, handleRadius= 30, initial=0,step=1),
             "slider2":Slider(self.screen, WIDTH//2-260//2,400, 260,75, min=0, max=5, handleRadius= 30, initial=0, step=0.1),
             "toggle":Toggle(self.screen, WIDTH//2 - 75//2, 500, 75,50, handleRadius=25),
             "button":Button(self.screen, center/2-260/2, 600,260,100, onRelease=lambda: game.gamescene.set_scene(MainMenu(game))),
-            "button2":Button(self.screen, (center + center/2) - 260/2, 600,260,100, onRelease=lambda: game.gamescene.set_scene(TowerCats(game)))
+            "button2":Button(self.screen, (center + center/2) - 260/2, 600,260,100, onRelease=self.switch_to_game)
         }
     
     def run(self, events):
         pass
     
+    def switch_to_game(self):
+        self.game.gamescene.set_scene(TowerCats(game, rings=self.widgets['slider'].getValue(), shuffle=self.widgets['toggle'].getValue()))
+
     def destroy(self):
         for i,v in self.widgets.items():
             pygame_widgets.WidgetHandler().removeWidget(v)
@@ -173,46 +176,72 @@ class Leaderboard(Scene):
         pass
 
 class TowerCats(Scene):
-    def __init__(self, game):
+    def __init__(self, game, rings, shuffle=False):
         self.game = game
         self.screen = game.screen
-        # Initialize Towers VERY COMPLICATED
-        self.timer = 0
-        self.moves = 0
+        # Initialize Towers VERY COMPLICATED do not touch :) or else
+
+        # many useless variables
         lefterTower = Tower(self.game.screen,Stack())
         midTower = Tower(self.game.screen,Stack())
         righterTower = Tower(self.game.screen,Stack())
+        modidier = 50
         center = WIDTH//2
-        left = center/2
-        right = center + center/2
+        left = center/2 - modidier
+        right = center + center/2 + modidier
         lefterTower.image_rect.center = (left-lefterTower.image_rect.width//2, HEIGHT-lefterTower.image_rect.height)
         midTower.image_rect.center = (center-lefterTower.image_rect.width//2, HEIGHT-lefterTower.image_rect.height)
         righterTower.image_rect.center = (right-lefterTower.image_rect.width//2, HEIGHT-lefterTower.image_rect.height)
-        lefterTower.image_rect.x= lefterTower.image_rect.centerx
+
+        lefterTower.image_rect.x, lefterTower.image_rect.y = left-lefterTower.image_rect.width//2, HEIGHT-lefterTower.image_rect.height
+        midTower.image_rect.x, midTower.image_rect.y = center-midTower.image_rect.width//2,HEIGHT-midTower.image_rect.height
+        righterTower.image_rect.x, righterTower.image_rect.y = right-righterTower.image_rect.width//2,HEIGHT-righterTower.image_rect.height
+        
+
+        self.widget = {
+            "timer": TextBox(self.screen, WIDTH//2- 200//2,0, 200,50),
+            "moves": TextBox(self.screen, WIDTH//2- 200//2,50, 200,50),
+            "pause": Button(self.screen, 0,0,50,50,text="||", onRelease=self.pause)
+        }
+
         towers = Stack()
         towers.insert(lefterTower)
         towers.insert(midTower)
         towers.insert(righterTower)
-        self.hanoi = Hanoi(self.game.screen, towers, 3)
+
+        for i in towers:
+            i.hitbox_rect.x, i.hitbox_rect.y = i.image_rect.x - (i.hitbox_rect.width//2 - i.image_rect.width//2), i.image_rect.y
+        # end useless variable
+        self.hanoi = Hanoi(self.game, towers, rings, shuffled=shuffle)
 
     def run(self, events):
-        self.hanoi.update()
-        center = WIDTH//2
-        left = center/2
-        right = center + center/2
+        self.widget['timer'].setText("Time: "+str(int(self.hanoi.time)))
+        self.widget['moves'].setText("Moves:" +str(self.hanoi.moves))
+        self.hanoi.update(events)
+    
+    def pause(self):
+        self.hanoi.pause = True
+        self.widget['pause'].disable()
+        self.widget['array'] = ButtonArray(self.screen, WIDTH//2-200//2,300,200,400,(1,2), texts=["resume","quit"], onReleases=[self.resume, self.quit])
 
-        pygame.draw.line(self.screen, (255,0,0), (left,0),((left,HEIGHT)))
-        pygame.draw.line(self.screen, (255,0,0), (center,0),((center,HEIGHT)))
-        pygame.draw.line(self.screen, (255,0,0), (right,0),((right,HEIGHT)))
-
+    def quit(self):
+        self.game.gamescene.set_scene(MainMenu(self.game))
+    
+    def resume(self):
+        self.hanoi.pause = False
+        self.widget['pause'].enable()
+        pygame_widgets.WidgetHandler().removeWidget(self.widget['array'])
     def destroy(self):
-        pass
+        for i,v in self.widget.items():
+            pygame_widgets.WidgetHandler().removeWidget(v)
 
 
 class Game:
+
     def __init__(self):
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.gamescene = SceneManager(MainMenu(self))
+        self.delta = 0
         
         self.run = False
 
@@ -239,11 +268,9 @@ class Game:
             for event in events:
                 if event.type == pygame.QUIT:
                     self.run = False
-                '''if self.gamescene.get_scene() != 'quit':
-                    self.scene[self.gamescene.get_scene()].event(event)'''
 
             self.gamescene.update(events)
-
+            self.delta = pygame.time.Clock().tick(30) / 1000
             pygame_widgets.update(events)
             pygame.display.update()
 

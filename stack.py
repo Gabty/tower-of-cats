@@ -83,6 +83,17 @@ class Stack:
             new_stack.insert(current.data)
             current = current.next
         return new_stack
+    def getLast(self):
+        if self.head == None:
+            return
+        current = self.head
+        if current.next == None:
+            return current.data
+        
+        while current.next:
+            current = current.next
+        
+        return current.data
     def __eq__(self, other):
         if not isinstance(other, Stack):
             return False
@@ -97,6 +108,8 @@ class Stack:
             other_current = other_current.next
         return current == None and other_current == None
     def __str__(self):
+        if self.head == None:
+            return 'None'
         return self.show()
 
     def __bool__(self):
@@ -112,13 +125,33 @@ class Stack:
         while current:
             yield current.data
             current = current.next
+    
+    def __len__(self):
+        i = 0
+        current = self.head
+        while current:
+            current = current.next
+            i+=1
+        
+        return i
+    
+    def inverse(self):
+        if self.head == None:
+            return
+        
+        beta = Stack()
+        current = self.head
+        while current:
+            beta.insert(current.data)
+            current = current.next
+        while beta:
+            yield beta.get()
         
 
 if __name__ == '__main__':
     a = Stack()
-    a.insert(2)
-    a.insert(6)
-    a.insert(3)
-    b = a.copy()
 
-    print(b.show())
+    a.insert(5)
+    a.insert(3)
+    a.insert(7)
+    print(a.getLast())
