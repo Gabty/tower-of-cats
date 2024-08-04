@@ -61,7 +61,11 @@ class MainMenu(Scene):
         
         self.mouse = pygame.mouse
 
+        self.bg_image = pygame.image.load("bg.png")
+        self.bg_rect = self.bg_image.get_rect(topleft=(0, 0))
+
     def run(self, events):
+        self.screen.blit(self.bg_image, self.bg_rect.topleft)
         self.screen.blit(self.title, (WIDTH / 2 - self.title.get_width() / 2, 100))
 
     def destroy(self):
@@ -90,9 +94,13 @@ class Settings(Scene):
         self.font = pygame.font.Font(None, 40)
 
         self.open()
+        
+        self.bg_image = pygame.image.load("bg.png")
+        self.bg_rect = self.bg_image.get_rect(topleft=(0, 0))
     
     def run(self, events):
-        # Draw labels and title
+        self.screen.blit(self.bg_image, self.bg_rect.topleft)
+        
         self.screen.blit(self.bgm_label, (WIDTH / 2 - self.bgm_label.get_width() / 2, 280))
         self.screen.blit(self.sfx_label, (WIDTH / 2 - self.sfx_label.get_width() / 2, 400))
         self.screen.blit(self.settings_title, (WIDTH / 2 - self.settings_title.get_width() / 2, 100))
@@ -156,11 +164,16 @@ class GameSelection(Scene):
         # Create an initial text for slider value
         self.update_slider_value()
 
+        self.bg_image = pygame.image.load("bg.png")
+        self.bg_rect = self.bg_image.get_rect(topleft=(0, 0))
+
     def update_slider_value(self):
         value = int(self.widgets['slider'].getValue())
         self.slider_value_text = self.fontLabel.render(str(value), True, (0, 0, 0)) 
 
     def run(self, events):
+        self.screen.blit(self.bg_image, self.bg_rect.topleft)
+        
         self.screen.blit(self.gameselection_title, (WIDTH / 2 - self.gameselection_title.get_width() / 2, 60))
         self.screen.blit(self.slider_text, (WIDTH / 2 - self.slider_text.get_width() / 2 - 25, 200))
         self.screen.blit(self.toggle_text, (WIDTH / 2 - self.toggle_text.get_width() / 2, 360))
@@ -197,10 +210,12 @@ class Leaderboard(Scene):
         self.y_scroll = 0
         self.create_leaderboard()
 
-        # Create back button
         self.back_button_font = pygame.font.Font(None, 48)
         self.back_button = self.back_button_font.render("Back", True, (0, 0, 0))
         self.back_button_rect = self.back_button.get_rect(topleft=(10, 10))
+
+        self.bg_image = pygame.image.load("bg.png")
+        self.bg_rect = self.bg_image.get_rect(topleft=(0, 0))
 
     def load_leaderboard(self):
         if os.path.exists('leaderboard.json'):
@@ -220,7 +235,7 @@ class Leaderboard(Scene):
             self.surface.blit(text, (10, i * 50 + 30))  
 
     def run(self, events):
-        self.screen.fill((255, 255, 255))  # Clear the screen
+        self.screen.blit(self.bg_image, self.bg_rect.topleft)
         self.screen.blit(self.title, (WIDTH / 2 - self.title.get_width() / 2, 80))  
         self.screen.blit(self.back_button, self.back_button_rect.topleft)
 
@@ -237,14 +252,12 @@ class Leaderboard(Scene):
     def destroy(self):
         pass
 
-
-
-
 class TowerCats(Scene):
     def __init__(self, game, rings, shuffle=False):
         self.game = game
         self.screen = game.screen
         self.paused = False
+
         
         lefterTower = Tower(self.game.screen, Stack())
         midTower = Tower(self.game.screen, Stack())
@@ -277,17 +290,18 @@ class TowerCats(Scene):
 
         self.timer_rect = pygame.Rect(WIDTH // 2 - 200 // 2, 25, 200, 60)
         self.moves_rect = pygame.Rect(WIDTH // 2 - 200 // 2, 75, 200, 70)
-        self.text_color = (241, 215, 147)  
-        self.bg_color = (0, 255, 0, 1)  
+        self.text_color = (0,0,0)  
+
+        self.bg_image = pygame.image.load("bg.png")
+        self.bg_rect = self.bg_image.get_rect(topleft=(0, 0))
 
     def run(self, events):
+        self.screen.blit(self.bg_image, self.bg_rect.topleft)
         
-        # Draw text
         font = pygame.font.Font(None, 54)
         timer_text = font.render(f"Time: {int(self.hanoi.time)}", True, self.text_color)
         moves_text = font.render(f"Moves: {self.hanoi.moves}", True, self.text_color)
         
-        # Blit text onto the screen
         self.screen.blit(timer_text, (self.timer_rect.x + 10, self.timer_rect.y + 10))
         self.screen.blit(moves_text, (self.moves_rect.x + 10, self.moves_rect.y + 10))
         
@@ -309,7 +323,18 @@ class TowerCats(Scene):
         moves = self.hanoi.moves
         timer = self.hanoi.time
         rings = self.hanoi.rings
-        score = (rings * 1000) - (moves * 5) - (timer/2)
+        min_move = self.hanoi.min_moves
+        base = 1000
+        super_base = rings * base
+        score = round( (super_base - ((min_move-moves) / moves) * base))
+
+        print("Moves: ", moves)
+        print("Timer: ", timer)
+        print("Min Move: ", min_move)
+        print("Rings: ", rings)
+        print("Base: ", base)
+        print("Score: ", score)
+
         return max(0, int(score)) 
 
     def handle_event(self, event):
@@ -356,8 +381,11 @@ class Winner(Scene):
             Button(self.game.screen, WIDTH / 2 - 150, 520, 300, 100, radius=50, text='Main Menu', fontSize=64, onRelease=lambda: game.gamescene.set_scene(MainMenu(game)))
         ]
 
+        self.bg_image = pygame.image.load("bg.png")
+        self.bg_rect = self.bg_image.get_rect(topleft=(0, 0))
+
     def run(self, events):
-        self.screen.fill((255, 255, 255))  # Clear the screen
+        self.screen.blit(self.bg_image, self.bg_rect.topleft)
         self.screen.blit(self.title, (WIDTH / 2 - self.title.get_width() / 2, 75))
 
         # Display the score
