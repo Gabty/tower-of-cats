@@ -42,5 +42,13 @@
     {
         "name": "lol",
         "score": 3000
+    },
+    {
+        "name": "test",
+        "score": 3000
+    },
+    {
+        "name": "yes",
+        "score": 3125
     }
 ]

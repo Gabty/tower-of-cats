@@ -50,7 +50,7 @@ class MainMenu(Scene):
         self.game = game
         self.screen = game.screen
         self.font = pygame.font.Font(None, 78)
-        self.title = self.font.render("Tower of Cats", True, (100, 155, 240))
+        self.title = self.font.render("Tower of Cats", True, (0,0,0))
         
         self.buttons = [
             Button(self.game.screen, WIDTH / 2 - 300 / 2, 200 + 20, 300, 100, radius=50, text='Play', fontSize=64, onRelease=lambda: game.gamescene.set_scene(GameSelection(game))),
@@ -61,7 +61,7 @@ class MainMenu(Scene):
         
         self.mouse = pygame.mouse
 
-        self.bg_image = pygame.image.load("bg.png")
+        self.bg_image = pygame.image.load("images/game/backgrounds/menu_bg.png")
         self.bg_rect = self.bg_image.get_rect(topleft=(0, 0))
 
     def run(self, events):
@@ -95,7 +95,7 @@ class Settings(Scene):
 
         self.open()
         
-        self.bg_image = pygame.image.load("bg.png")
+        self.bg_image = pygame.image.load("images/game/backgrounds/menu_bg.png")
         self.bg_rect = self.bg_image.get_rect(topleft=(0, 0))
     
     def run(self, events):
@@ -164,7 +164,7 @@ class GameSelection(Scene):
         # Create an initial text for slider value
         self.update_slider_value()
 
-        self.bg_image = pygame.image.load("bg.png")
+        self.bg_image = pygame.image.load("images/game/backgrounds/menu_bg.png")
         self.bg_rect = self.bg_image.get_rect(topleft=(0, 0))
 
     def update_slider_value(self):
@@ -214,7 +214,7 @@ class Leaderboard(Scene):
         self.back_button = self.back_button_font.render("Back", True, (0, 0, 0))
         self.back_button_rect = self.back_button.get_rect(topleft=(10, 10))
 
-        self.bg_image = pygame.image.load("bg.png")
+        self.bg_image = pygame.image.load("images/game/backgrounds/leaderboard_bg.png")
         self.bg_rect = self.bg_image.get_rect(topleft=(0, 0))
 
     def load_leaderboard(self):
@@ -292,7 +292,7 @@ class TowerCats(Scene):
         self.moves_rect = pygame.Rect(WIDTH // 2 - 200 // 2, 75, 200, 70)
         self.text_color = (0,0,0)  
 
-        self.bg_image = pygame.image.load("bg.png")
+        self.bg_image = pygame.image.load("images/game/backgrounds/game_bg.png")
         self.bg_rect = self.bg_image.get_rect(topleft=(0, 0))
 
     def run(self, events):
@@ -381,7 +381,7 @@ class Winner(Scene):
             Button(self.game.screen, WIDTH / 2 - 150, 520, 300, 100, radius=50, text='Main Menu', fontSize=64, onRelease=lambda: game.gamescene.set_scene(MainMenu(game)))
         ]
 
-        self.bg_image = pygame.image.load("bg.png")
+        self.bg_image = pygame.image.load("images/game/backgrounds/winner_bg.png")
         self.bg_rect = self.bg_image.get_rect(topleft=(0, 0))
 
     def run(self, events):
@@ -416,7 +416,7 @@ class Winner(Scene):
             with open('leaderboard.json', 'w') as file:
                 json.dump(data, file, indent=4)
 
-            self.name_box.setText('')  # Clear the TextBox after saving
+            self.name_box.setText('')  
         
         self.game.gamescene.set_scene(MainMenu(self.game))
 
