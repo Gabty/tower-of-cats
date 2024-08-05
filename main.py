@@ -198,14 +198,14 @@ class Leaderboard(Scene):
     def __init__(self, game):
         self.game = game
         self.screen = game.screen
-        self.font = pygame.font.Font(None, 48)
+        self.font = pygame.font.Font(None, 41)
         self.title_font = pygame.font.Font(None, 72)  # Larger font for the title
         self.title = self.title_font.render("Leaderboard", True, (0, 0, 0))
 
         self.leaderboard_entries = self.load_leaderboard()[:10]  # Load only the top 10
-        self.content_height = 50 * len(self.leaderboard_entries)
-        self.surface = pygame.Surface((WIDTH, self.content_height + 20))  # Adjust for extra space
-        self.surface.fill((255, 255, 255))
+        self.content_height = 50 * (len(self.leaderboard_entries) + 1)  # Include space for the header
+        self.surface = pygame.Surface((WIDTH, self.content_height + 20), pygame.SRCALPHA)
+        self.surface.fill((255, 255, 255, 128))  # Fill with semi-transparent white
 
         self.y_scroll = 0
         self.create_leaderboard()
@@ -222,27 +222,40 @@ class Leaderboard(Scene):
             with open('leaderboard.json', 'r') as file:
                 data = json.load(file)
                 # Sort the data by score in descending order and return the top 10
-                # Use the binary tree for sorting if u want coz ur so crazy
                 data.sort(key=lambda x: x['score'], reverse=True)
                 return data[:10]
         return []
 
     def create_leaderboard(self):
+        # Define columns and their positions
+        columns = ["Rank", "Name", "Score"]
+        column_positions = [10, 150, 400]  # Adjust these positions as needed for proper spacing
+
+        # Render header
+        for col, pos in zip(columns, column_positions):
+            header = self.font.render(col, True, (0, 0, 0))
+            self.surface.blit(header, (pos, 10))  # Adjust the y position of the header
+
+        # Render leaderboard entries
+        entry_y_spacing = 49  # Adjust this value to change spacing between entries
         for i, entry in enumerate(self.leaderboard_entries):
-            name = entry['name']
-            score = entry['score']
-            text = self.font.render(f"{i + 1}. {name}    Score: {score}", True, (0, 0, 0))
-            self.surface.blit(text, (10, i * 50 + 30))  
+            rank_text = self.font.render(f"{i + 1}", True, (0, 0, 0))
+            name_text = self.font.render(entry['name'], True, (0, 0, 0))
+            score_text = self.font.render(str(entry['score']), True, (0, 0, 0))
+
+            texts = [rank_text, name_text, score_text]
+            for text, pos in zip(texts, column_positions):
+                self.surface.blit(text, (pos, 60 + i * entry_y_spacing))  # Adjust the y position for entries
 
     def run(self, events):
         self.screen.blit(self.bg_image, self.bg_rect.topleft)
-        self.screen.blit(self.title, (WIDTH / 2 - self.title.get_width() / 2, 80))  
+        self.screen.blit(self.title, (WIDTH / 2 - self.title.get_width() / 2, 80))
         self.screen.blit(self.back_button, self.back_button_rect.topleft)
 
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.back_button_rect.collidepoint(event.pos):
-                    self.game.gamescene.set_scene(MainMenu(self.game)) 
+                    self.game.gamescene.set_scene(MainMenu(self.game))
             if event.type == pygame.MOUSEWHEEL:
                 self.y_scroll -= event.y * 20
                 self.y_scroll = max(0, min(self.y_scroll, self.content_height - (HEIGHT - 100)))  # Adjust for title height
@@ -251,6 +264,7 @@ class Leaderboard(Scene):
 
     def destroy(self):
         pass
+
 
 class TowerCats(Scene):
     def __init__(self, game, rings, shuffle=False):
@@ -326,7 +340,7 @@ class TowerCats(Scene):
         min_move = self.hanoi.min_moves
         base = 1000
         super_base = rings * base
-        score = round( (super_base - ((min_move-moves) / moves) * base))
+        score = super_base - ((moves - min_move) / min_move) + ((timer - 1.5 * min_move)/1.5 * min_move) * base
 
         print("Moves: ", moves)
         print("Timer: ", timer)
@@ -372,7 +386,6 @@ class Winner(Scene):
         self.title = self.font.render("WINNER", True, (0, 0, 0))
         self.score = score
 
-        # Initialize TextBox for entering name
         self.name_box = TextBox(self.screen, WIDTH / 2 - 150, 300, 300, 60, fontSize=40, borderThickness=1, radius=10)
         
         # Initialize buttons
@@ -424,7 +437,6 @@ class Winner(Scene):
         pygame_widgets.WidgetHandler().removeWidget(self.name_box)
         for button in self.buttons:
             pygame_widgets.WidgetHandler().removeWidget(button)
-
 
 
 class Game:
