@@ -9,6 +9,7 @@ class Hanoi:
         self.game = game
         self.screen = game.screen
         self.towers = towers
+        self.rings = rings
 
         self.start = Stack()
         self.pause = False
@@ -32,7 +33,8 @@ class Hanoi:
         print(self.towers.index(0).stack)
         self.moves = 0
         self.min_moves = (2**rings) - 1 # FORMULA
-        self.time = round(self.min_moves * 1.5)
+        self.time = 0 #round(self.min_moves * 1.5)
+
     def update(self, events):
 
         for i in self.towers:
@@ -41,24 +43,28 @@ class Hanoi:
             i.update()
 
         if not self.pause:
-            self.time -= self.game.delta
+            self.time += self.game.delta
             for event in events:
                 for tower in self.towers:
                     if event.type == pygame.MOUSEBUTTONUP and tower.hitbox_rect.collidepoint(pygame.mouse.get_pos()) and self.selected == None and len(tower.stack) != 0:
                         self.selected = tower
-                    elif event.type == pygame.MOUSEBUTTONUP and tower.hitbox_rect.collidepoint(pygame.mouse.get_pos()) and self.selected != tower and self.selected != None:
+                        self.game.sfx['select'].play()
+                    elif event.type == pygame.MOUSEBUTTONUP and tower.hitbox_rect.collidepoint(pygame.mouse.get_pos()) and self.selected != None:
                         if len(tower.stack) == 0:
                             ring = self.selected.stack.get()
                             ring.tower = tower
                             tower.stack.insert(ring)
+                            self.game.sfx['meow'].play()
                         
                         elif tower.stack.getLast().value > self.selected.stack.getLast().value:
                             ring = self.selected.stack.get()
                             ring.tower = tower
                             tower.stack.insert(ring)
-                        
-                        if self.selected == tower:
+                            self.game.sfx['meow'].play()
+                    
+                        else:
                             self.selected = None
+                            self.game.sfx['wrong'].play()
                             continue
                         
                         self.selected = None
@@ -72,14 +78,14 @@ class Tower:
         self.image = pygame.image.load('images/game/tower.png')
         self.image_rect = self.image.get_rect()
         self.hitbox_rect = pygame.Rect(self.image_rect.x, self.image_rect.y, 175, self.image_rect.height)
-        self.selected = False
+
     def update(self):
 
         self.screen.blit(self.image, pos(self.image_rect))
         for i in self.stack.inverse():
             i.update()
 
-        #self.screen.blit(self.image, pos(self.image_rect))
+        #self.screen.blit(self.image, pos(self.image_rect)) remove this
 
 class Ring:
     def __init__(self,screen,value, tower):
@@ -93,8 +99,6 @@ class Ring:
         self.image_rect.x, self.image_rect.y = self.tower.image_rect.x-(self.image_rect.width//2 - self.tower.image_rect.width//2), HEIGHT-(self.tower.stack.getIndex(self) * (self.image_rect.height - 10)) - 100
         
         self.screen.blit(self.image, pos(self.image_rect))
-
-        pygame.draw.rect(self.screen, (255,0,0), self.image_rect, 1)
 
 def pos(rect):
     return rect.x, rect.y

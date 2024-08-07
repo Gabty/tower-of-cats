@@ -3,6 +3,7 @@ class Node:
         self.data = data
         self.next = None
 
+
 class Stack:
     def __init__(self):
         self.head = None
@@ -39,7 +40,6 @@ class Stack:
         data = self.head.data
         self.head = self.head.next
         return data
-
     
     def show(self):
         if self.head == None:
@@ -63,6 +63,14 @@ class Stack:
         if current is None: raise IndexError("Out of bounds")
         return i
 
+    def get_by_index(self, index):
+        if index < 0 or index >= len(self):
+            raise IndexError("Index out of bounds")
+        current = self.head
+        for _ in range(index):
+            current = current.next
+        return current.data
+
     def index(self, index):
         if self.head == None:
             return
@@ -73,6 +81,7 @@ class Stack:
             current = current.next
             i+=1
         if current == None: raise IndexError("Not found")
+
         return current.data
     def copy(self):
         if self.head == None:
@@ -83,6 +92,7 @@ class Stack:
             new_stack.insert(current.data)
             current = current.next
         return new_stack
+    
     def getLast(self):
         if self.head == None:
             return
@@ -94,6 +104,7 @@ class Stack:
             current = current.next
         
         return current.data
+    
     def __eq__(self, other):
         if not isinstance(other, Stack):
             return False
@@ -107,6 +118,7 @@ class Stack:
             current = current.next
             other_current = other_current.next
         return current == None and other_current == None
+    
     def __str__(self):
         if self.head == None:
             return 'None'
