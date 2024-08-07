@@ -30,10 +30,9 @@ class Hanoi:
                 tower = self.towers.index(randint(0,2))
                 ring.tower = tower
                 tower.stack.insert(ring)
-        print(self.towers.index(0).stack)
         self.moves = 0
-        self.min_moves = (2**rings) - 1 # FORMULA
-        self.time = 0 #round(self.min_moves * 1.5)
+        self.min_moves = (2**rings) - 1 # MINIMUM
+        self.time = 0 
 
     def update(self, events):
 
@@ -63,8 +62,9 @@ class Hanoi:
                             self.game.sfx['meow'].play()
                     
                         else:
+                            if tower != self.selected:
+                                self.game.sfx['wrong'].play()
                             self.selected = None
-                            self.game.sfx['wrong'].play()
                             continue
                         
                         self.selected = None
@@ -85,7 +85,6 @@ class Tower:
         for i in self.stack.inverse():
             i.update()
 
-        #self.screen.blit(self.image, pos(self.image_rect)) remove this
 
 class Ring:
     def __init__(self,screen,value, tower):
@@ -96,7 +95,7 @@ class Ring:
         self.image = scale(image, (130,60))
         self.image_rect = self.image.get_rect()
     def update(self):
-        self.image_rect.x, self.image_rect.y = self.tower.image_rect.x-(self.image_rect.width//2 - self.tower.image_rect.width//2), HEIGHT-(self.tower.stack.getIndex(self) * (self.image_rect.height - 10)) - 100
+        self.image_rect.x, self.image_rect.y = self.tower.image_rect.x-(self.image_rect.width//2 - self.tower.image_rect.width//2), HEIGHT-(self.tower.stack.getIndex(self) * (self.image_rect.height - 10)) - 75
         
         self.screen.blit(self.image, pos(self.image_rect))
 
