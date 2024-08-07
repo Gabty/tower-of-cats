@@ -214,7 +214,7 @@ class Leaderboard(Scene):
         self.create_leaderboard()
 
         self.widgets = {
-            'back': Button(self.screen, 0,0,125,45, text="Back")
+            'back': Button(self.screen, 0,0,125,45, text="Back", onRelease=lambda: game.gamescene.set_scene(MainMenu(game)))
         }
 
         self.bg_image = pygame.image.load("images/game/backgrounds/leaderboard_bg.png")
