@@ -233,7 +233,7 @@ class Leaderboard(Scene):
         self.leaderboard_entries = self.load_leaderboard()
         self.content_height = 50 * (len(self.leaderboard_entries) + 1)  # Include space for the header
         self.surface = pygame.Surface((WIDTH, self.content_height + 20), pygame.SRCALPHA)
-        self.surface.fill((255, 255, 255, 20))  # Fill with semi-transparent white
+        self.surface.fill((255, 255, 255, 128))  # Fill with semi-transparent white
 
         self.y_scroll = 0
         self.create_leaderboard()
@@ -376,7 +376,7 @@ class TowerCats(Scene):
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             self.pause()
-    
+
     def pause(self):
         self.game.sfx['button'].play()
         if not self.paused:
@@ -409,7 +409,7 @@ class Winner(Scene):
     def __init__(self, game, score):
         self.game = game
         self.screen = game.screen
-        self.font = pygame.font.Font(None, 96)
+        self.font = pygame.font.Font(font_bold, 64)
         self.title = self.font.render("WINNER", True, (0, 0, 0))
         self.score = score
 
