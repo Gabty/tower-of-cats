@@ -25,7 +25,7 @@ border_hover = (255, 180, 180)
 border_click = (255, 160, 160)
 
 font_color_button = (235, 140, 140)
-font_color = (255, 120, 120) # COLOR not on button
+font_color = (0,0,0) # COLOR not on button
 
 header_color = (255,90,90)
 
@@ -239,7 +239,7 @@ class Leaderboard(Scene):
         self.create_leaderboard()
 
         self.widgets = {
-            'back': Button(self.screen, 0,0,125,45,borderThickness=5, inactiveColour=inactive, hoverColour=hover,pressedColour=click, inactiveBorderColour=border_inactive,hoverBorderColour=border_hover,pressedBorderColour=border_click, text="Back")
+            'back': Button(self.screen, 0,0,125,45,borderThickness=3, radius = 50, inactiveColour=inactive, hoverColour=hover,pressedColour=click, inactiveBorderColour=border_inactive,hoverBorderColour=border_hover,pressedBorderColour=border_click, text="Back", onRelease=lambda: game.gamescene.set_scene(MainMenu(game)))
         }
 
         self.bg_image = pygame.image.load("images/game/backgrounds/leaderboard_bg.png")
