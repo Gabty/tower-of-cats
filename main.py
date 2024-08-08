@@ -184,7 +184,7 @@ class GameSelection(Scene):
         # Initialize widgets
         center = WIDTH / 2
         self.widgets = {
-            "slider": Slider(self.screen, WIDTH // 2 - 260 // 2, 280, 260, 15,colour=inactive,handleColour=click, min=3, max=9, handleRadius=30, initial=3, step=0.01),
+            "slider": Slider(self.screen, WIDTH // 2 - 260 // 2, 280, 260, 15,colour=(255,255,255),handleColour=click, min=3, max=9, handleRadius=30, initial=3, step=0.01),
             "toggle": Toggle(self.screen, WIDTH // 2 - 75 // 2, 410, 75, 50, handleRadius=25, handleOnColour=border_click,handleOffColour=border_inactive,onColour=inactive,offColour=click),
             "back": Button(self.screen, center / 2 - 260 / 2, 550, 260, 110,font=pygame.font.Font(font_bold, 52),borderThickness=5, inactiveColour=inactive, hoverColour=hover,pressedColour=click, inactiveBorderColour=border_inactive,hoverBorderColour=border_hover,pressedBorderColour=border_click, radius=50, text="Back", fontSize=64, onRelease=lambda: self.switch('back')),
             "play": Button(self.screen, (center + center / 2) - 260 / 2, 550, 260, 110,font=pygame.font.Font(font_bold, 52),borderThickness=5, inactiveColour=inactive, hoverColour=hover,pressedColour=click, inactiveBorderColour=border_inactive,hoverBorderColour=border_hover,pressedBorderColour=border_click, radius=50, text="Play", fontSize=64, onRelease=lambda: self.switch('play'))
