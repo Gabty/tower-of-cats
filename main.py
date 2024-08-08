@@ -239,7 +239,7 @@ class Leaderboard(Scene):
         self.create_leaderboard()
 
         self.widgets = {
-            'back': Button(self.screen, 0,0,125,45,borderThickness=3, radius = 50, inactiveColour=inactive, hoverColour=hover,pressedColour=click, inactiveBorderColour=border_inactive,hoverBorderColour=border_hover,pressedBorderColour=border_click, text="Back", onRelease=lambda: game.gamescene.set_scene(MainMenu(game)))
+            'back': Button(self.screen, 0,0,125,45,borderThickness=3, font=pygame.font.Font(font_bold, 27), radius = 50, inactiveColour=inactive, hoverColour=hover,pressedColour=click, inactiveBorderColour=border_inactive,hoverBorderColour=border_hover,pressedBorderColour=border_click, text="Back", onRelease=lambda: game.gamescene.set_scene(MainMenu(game)))
         }
 
         self.bg_image = pygame.image.load("images/game/backgrounds/leaderboard_bg.png")
