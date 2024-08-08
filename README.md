@@ -1,3 +1,7 @@
+No need for this, as discussed that we will no longer use buttons
+
+
+
 Just a bit of insight or like a template for changing the button widget into a button image (although you already know how)
 
 
